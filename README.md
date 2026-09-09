@@ -11,7 +11,7 @@
 | Campo | |
 |---|---|
 | **Total de bugs corrigidos** | 12 / 12 |
-| **Total de ajustes de Clean Code** | 2 / 6 |
+| **Total de ajustes de Clean Code** | 3 / 6 |
 
 ---
 
@@ -41,7 +41,7 @@
 |---|---|---|---|
 | clean01 | `Conteudo.duracaoMinutos` e acessos diretos no `ConteudoController`. | O atributo era público, quebrando o encapsulamento e permitindo alterações que ignorassem sua validação. | Tornei o atributo privado e substituí os acessos diretos pelo getter. |
 | clean02 | `Usuario.alugar`, nos nomes `c` e `p`. | Nomes de uma letra escondiam o papel do conteúdo e do preço na principal regra de negócio. | Renomeei-os para `conteudo` e `precoAluguel` em todo o método. |
-| clean03 | | | |
+| clean03 | Final de `ConteudoController`. | Havia um método de desconto antigo nunca chamado e um bloco de cupom comentado, aumentando ruído e sugerindo regras que não pertencem ao contrato atual. | Removi o código morto; o histórico do Git continua disponível caso uma regra futura precise ser recuperada. |
 | clean04 | | | |
 | clean05 | | | |
 | clean06 | | | |
