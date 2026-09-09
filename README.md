@@ -11,7 +11,7 @@
 | Campo | |
 |---|---|
 | **Total de bugs corrigidos** | 12 / 12 |
-| **Total de ajustes de Clean Code** | 1 / 6 |
+| **Total de ajustes de Clean Code** | 2 / 6 |
 
 ---
 
@@ -40,7 +40,7 @@
 | # | Onde estava | Qual princípio/boas práticas era violado | O que eu mudei |
 |---|---|---|---|
 | clean01 | `Conteudo.duracaoMinutos` e acessos diretos no `ConteudoController`. | O atributo era público, quebrando o encapsulamento e permitindo alterações que ignorassem sua validação. | Tornei o atributo privado e substituí os acessos diretos pelo getter. |
-| clean02 | | | |
+| clean02 | `Usuario.alugar`, nos nomes `c` e `p`. | Nomes de uma letra escondiam o papel do conteúdo e do preço na principal regra de negócio. | Renomeei-os para `conteudo` e `precoAluguel` em todo o método. |
 | clean03 | | | |
 | clean04 | | | |
 | clean05 | | | |
