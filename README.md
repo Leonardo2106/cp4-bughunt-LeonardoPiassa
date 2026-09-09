@@ -10,7 +10,7 @@
 
 | Campo | |
 |---|---|
-| **Total de bugs corrigidos** | 6 / 12 |
+| **Total de bugs corrigidos** | 7 / 12 |
 | **Total de ajustes de Clean Code** | ___ / 6 |
 
 ---
@@ -28,7 +28,7 @@
 | bug04 | O preço promocional de um filme ficava 20% mais caro (estreia: R$ 17,88) em vez de ter desconto (R$ 11,92). | `Filme.java`, `aplicarPromocao`: multiplicava o preço por `1.2`, aplicando acréscimo. | Alterei o fator para `0.8`, preservando 80% do preço e concedendo os 20% de desconto do contrato. | Interface e implementação de regra de negócio (Aula 9). |
 | bug05 | Ao cadastrar uma série, título e categoria ficavam nulos, duração/classificação ficavam zero e ela sempre ficava indisponível. | `Serie.java`, construtor: não chamava `super(...)`; `ConteudoController` também não repassava `disponivel`. | O construtor agora encaminha todos os dados comuns à superclasse, e o controller repassa a disponibilidade recebida. | Herança e encadeamento de construtores (Aulas 4 e 6). |
 | bug06 | Uma série de 5 temporadas custava R$ 9,90 em vez de R$ 24,50. | `Serie.java`, `calcularPrecoAluguel(double)`: o parâmetro extra criava uma sobrecarga, portanto chamadas polimórficas usavam a implementação de `Conteudo`. | Corrigi a assinatura para `calcularPrecoAluguel()` e adicionei `@Override`, fazendo o preço de R$ 4,90 por temporada ser usado. | Polimorfismo por sobrescrita versus sobrecarga (Aula 7). |
-| bug07 | | | | |
+| bug07 | Um documentário era alugado por R$ 9,90, apesar de o contrato defini-lo como gratuito. | `Documentario.java`: não sobrescrevia `calcularPrecoAluguel` e herdava o preço genérico de `Conteudo`. | Implementei a sobrescrita retornando R$ 0,00; ele continua fora de promoções por não implementar `Promocionavel`. | Herança e polimorfismo por sobrescrita (Aulas 6 a 9). |
 | bug08 | | | | |
 | bug09 | | | | |
 | bug10 | | | | |
