@@ -10,7 +10,7 @@
 
 | Campo | |
 |---|---|
-| **Total de bugs corrigidos** | 2 / 12 |
+| **Total de bugs corrigidos** | 3 / 12 |
 | **Total de ajustes de Clean Code** | ___ / 6 |
 
 ---
@@ -24,7 +24,7 @@
 |---|---|---|---|---|
 | bug01 | `GET /api/conteudos/999` devolvia uma resposta vazia de sucesso, sem explicar que o conteúdo não existia. | `ConteudoController.java`, antigo método `buscarPorId`: um `catch (Exception)` vazio engolia `ConteudoNaoEncontradoException` e o método retornava `null`. | Removi o `try/catch` genérico e deixei a exceção específica chegar ao `GlobalExceptionHandler`, que responde 404 com a mensagem. | Tratamento de exceções específicas e propagação de erros (Aula 11). |
 | bug02 | `GET /api/conteudos/categoria/FICCAO` podia retornar lista vazia mesmo havendo conteúdos nessa categoria. | `ConteudoController.java`, antigo `listarPorCategoria`: comparava objetos `String` com `==`, que verifica referência em vez do texto. | Passei a chamar `ConteudoRepository.findByCategoria`, consulta derivada que compara corretamente o valor persistido. | Comparação de objetos e Spring Data JPA (Aulas 1 e 13). |
-| bug03 | | | | |
+| bug03 | Um `POST` de conteúdo com `duracaoMinutos` igual a zero ou negativa era aceito e persistido. | `Conteudo.java`, construtor e `setDuracaoMinutos`: o atributo era atribuído sem validar a regra. | Centralizei a validação no setter, usei-o no construtor e criei uma exceção específica tratada como HTTP 400 com mensagem clara. | Encapsulamento, validação de estado e exceções customizadas (Aulas 3, 4 e 11). |
 | bug04 | | | | |
 | bug05 | | | | |
 | bug06 | | | | |

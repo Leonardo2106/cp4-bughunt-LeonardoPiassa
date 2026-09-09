@@ -24,4 +24,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleConteudoIndisponivel(ConteudoIndisponivelException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("erro", e.getMessage()));
     }
+
+    @ExceptionHandler(DuracaoInvalidaException.class)
+    public ResponseEntity<Map<String, String>> handleDuracaoInvalida(DuracaoInvalidaException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("erro", e.getMessage()));
+    }
 }
