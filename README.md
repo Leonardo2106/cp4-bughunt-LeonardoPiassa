@@ -11,7 +11,7 @@
 | Campo | |
 |---|---|
 | **Total de bugs corrigidos** | 12 / 12 |
-| **Total de ajustes de Clean Code** | ___ / 6 |
+| **Total de ajustes de Clean Code** | 1 / 6 |
 
 ---
 
@@ -39,7 +39,7 @@
 
 | # | Onde estava | Qual princípio/boas práticas era violado | O que eu mudei |
 |---|---|---|---|
-| clean01 | | | |
+| clean01 | `Conteudo.duracaoMinutos` e acessos diretos no `ConteudoController`. | O atributo era público, quebrando o encapsulamento e permitindo alterações que ignorassem sua validação. | Tornei o atributo privado e substituí os acessos diretos pelo getter. |
 | clean02 | | | |
 | clean03 | | | |
 | clean04 | | | |
