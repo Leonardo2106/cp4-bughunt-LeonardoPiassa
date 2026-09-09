@@ -10,7 +10,7 @@
 
 | Campo | |
 |---|---|
-| **Total de bugs corrigidos** | 10 / 12 |
+| **Total de bugs corrigidos** | 11 / 12 |
 | **Total de ajustes de Clean Code** | ___ / 6 |
 
 ---
@@ -32,7 +32,7 @@
 | bug08 | `POST /api/usuarios` tentava salvar um usuário sem ID, podendo falhar na persistência em vez de devolver o ID gerado. | `Usuario.java`, atributo `id`: tinha `@Id`, mas não declarava estratégia de geração. | Adicionei `@GeneratedValue(strategy = GenerationType.IDENTITY)`, deixando o banco gerar a chave como já ocorria em `Conteudo`. | Mapeamento JPA e persistência de entidades (Aula 13). |
 | bug09 | O usuário era cadastrado com `nome: null`, embora o nome tivesse sido enviado no corpo da requisição. | `Usuario.java`, construtor: `nome = nome` atribuía o parâmetro a ele mesmo e não alterava o atributo. | Troquei por `this.nome = nome`, diferenciando o atributo da instância do parâmetro. | Estado de objetos, construtores e uso de `this` (Aulas 1 e 4). |
 | bug10 | Usuários sem saldo conseguiam alugar e ficar com créditos negativos, enquanto usuários com saldo suficiente eram recusados. | `Usuario.java`, `temCreditosSuficientes`: a comparação estava invertida (`preco >= creditos`). | Corrigi a condição para verificar se `creditos >= preco` antes do débito. | Método de comportamento e regra de negócio no model (Aula 2). |
-| bug11 | | | | |
+| bug11 | Um conteúdo marcado como indisponível ainda podia ser alugado e ter seu preço debitado. | `Usuario.java`, `alugar`: não verificava `Conteudo.isDisponivel()` antes das demais operações. | Incluí a validação no início do método e lancei a `ConteudoIndisponivelException` já tratada pela API. | Encapsulamento da regra de negócio no model e exceções (Aulas 2 e 11). |
 | bug12 | | | | |
 
 ## Parte 2 — Ajustes de Clean Code
