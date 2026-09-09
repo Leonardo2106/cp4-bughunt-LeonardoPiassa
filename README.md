@@ -10,7 +10,7 @@
 
 | Campo | |
 |---|---|
-| **Total de bugs corrigidos** | 8 / 12 |
+| **Total de bugs corrigidos** | 9 / 12 |
 | **Total de ajustes de Clean Code** | ___ / 6 |
 
 ---
@@ -30,7 +30,7 @@
 | bug06 | Uma série de 5 temporadas custava R$ 9,90 em vez de R$ 24,50. | `Serie.java`, `calcularPrecoAluguel(double)`: o parâmetro extra criava uma sobrecarga, portanto chamadas polimórficas usavam a implementação de `Conteudo`. | Corrigi a assinatura para `calcularPrecoAluguel()` e adicionei `@Override`, fazendo o preço de R$ 4,90 por temporada ser usado. | Polimorfismo por sobrescrita versus sobrecarga (Aula 7). |
 | bug07 | Um documentário era alugado por R$ 9,90, apesar de o contrato defini-lo como gratuito. | `Documentario.java`: não sobrescrevia `calcularPrecoAluguel` e herdava o preço genérico de `Conteudo`. | Implementei a sobrescrita retornando R$ 0,00; ele continua fora de promoções por não implementar `Promocionavel`. | Herança e polimorfismo por sobrescrita (Aulas 6 a 9). |
 | bug08 | `POST /api/usuarios` tentava salvar um usuário sem ID, podendo falhar na persistência em vez de devolver o ID gerado. | `Usuario.java`, atributo `id`: tinha `@Id`, mas não declarava estratégia de geração. | Adicionei `@GeneratedValue(strategy = GenerationType.IDENTITY)`, deixando o banco gerar a chave como já ocorria em `Conteudo`. | Mapeamento JPA e persistência de entidades (Aula 13). |
-| bug09 | | | | |
+| bug09 | O usuário era cadastrado com `nome: null`, embora o nome tivesse sido enviado no corpo da requisição. | `Usuario.java`, construtor: `nome = nome` atribuía o parâmetro a ele mesmo e não alterava o atributo. | Troquei por `this.nome = nome`, diferenciando o atributo da instância do parâmetro. | Estado de objetos, construtores e uso de `this` (Aulas 1 e 4). |
 | bug10 | | | | |
 | bug11 | | | | |
 | bug12 | | | | |
