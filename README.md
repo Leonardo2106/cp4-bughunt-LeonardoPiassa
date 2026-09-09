@@ -10,7 +10,7 @@
 
 | Campo | |
 |---|---|
-| **Total de bugs corrigidos** | 4 / 12 |
+| **Total de bugs corrigidos** | 5 / 12 |
 | **Total de ajustes de Clean Code** | ___ / 6 |
 
 ---
@@ -26,7 +26,7 @@
 | bug02 | `GET /api/conteudos/categoria/FICCAO` podia retornar lista vazia mesmo havendo conteúdos nessa categoria. | `ConteudoController.java`, antigo `listarPorCategoria`: comparava objetos `String` com `==`, que verifica referência em vez do texto. | Passei a chamar `ConteudoRepository.findByCategoria`, consulta derivada que compara corretamente o valor persistido. | Comparação de objetos e Spring Data JPA (Aulas 1 e 13). |
 | bug03 | Um `POST` de conteúdo com `duracaoMinutos` igual a zero ou negativa era aceito e persistido. | `Conteudo.java`, construtor e `setDuracaoMinutos`: o atributo era atribuído sem validar a regra. | Centralizei a validação no setter, usei-o no construtor e criei uma exceção específica tratada como HTTP 400 com mensagem clara. | Encapsulamento, validação de estado e exceções customizadas (Aulas 3, 4 e 11). |
 | bug04 | O preço promocional de um filme ficava 20% mais caro (estreia: R$ 17,88) em vez de ter desconto (R$ 11,92). | `Filme.java`, `aplicarPromocao`: multiplicava o preço por `1.2`, aplicando acréscimo. | Alterei o fator para `0.8`, preservando 80% do preço e concedendo os 20% de desconto do contrato. | Interface e implementação de regra de negócio (Aula 9). |
-| bug05 | | | | |
+| bug05 | Ao cadastrar uma série, título e categoria ficavam nulos, duração/classificação ficavam zero e ela sempre ficava indisponível. | `Serie.java`, construtor: não chamava `super(...)`; `ConteudoController` também não repassava `disponivel`. | O construtor agora encaminha todos os dados comuns à superclasse, e o controller repassa a disponibilidade recebida. | Herança e encadeamento de construtores (Aulas 4 e 6). |
 | bug06 | | | | |
 | bug07 | | | | |
 | bug08 | | | | |
