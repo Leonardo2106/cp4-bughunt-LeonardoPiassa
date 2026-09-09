@@ -10,7 +10,7 @@
 
 | Campo | |
 |---|---|
-| **Total de bugs corrigidos** | 9 / 12 |
+| **Total de bugs corrigidos** | 10 / 12 |
 | **Total de ajustes de Clean Code** | ___ / 6 |
 
 ---
@@ -31,7 +31,7 @@
 | bug07 | Um documentário era alugado por R$ 9,90, apesar de o contrato defini-lo como gratuito. | `Documentario.java`: não sobrescrevia `calcularPrecoAluguel` e herdava o preço genérico de `Conteudo`. | Implementei a sobrescrita retornando R$ 0,00; ele continua fora de promoções por não implementar `Promocionavel`. | Herança e polimorfismo por sobrescrita (Aulas 6 a 9). |
 | bug08 | `POST /api/usuarios` tentava salvar um usuário sem ID, podendo falhar na persistência em vez de devolver o ID gerado. | `Usuario.java`, atributo `id`: tinha `@Id`, mas não declarava estratégia de geração. | Adicionei `@GeneratedValue(strategy = GenerationType.IDENTITY)`, deixando o banco gerar a chave como já ocorria em `Conteudo`. | Mapeamento JPA e persistência de entidades (Aula 13). |
 | bug09 | O usuário era cadastrado com `nome: null`, embora o nome tivesse sido enviado no corpo da requisição. | `Usuario.java`, construtor: `nome = nome` atribuía o parâmetro a ele mesmo e não alterava o atributo. | Troquei por `this.nome = nome`, diferenciando o atributo da instância do parâmetro. | Estado de objetos, construtores e uso de `this` (Aulas 1 e 4). |
-| bug10 | | | | |
+| bug10 | Usuários sem saldo conseguiam alugar e ficar com créditos negativos, enquanto usuários com saldo suficiente eram recusados. | `Usuario.java`, `temCreditosSuficientes`: a comparação estava invertida (`preco >= creditos`). | Corrigi a condição para verificar se `creditos >= preco` antes do débito. | Método de comportamento e regra de negócio no model (Aula 2). |
 | bug11 | | | | |
 | bug12 | | | | |
 
