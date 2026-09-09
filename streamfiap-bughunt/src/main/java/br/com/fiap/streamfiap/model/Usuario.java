@@ -55,6 +55,12 @@ public class Usuario {
         debitarCreditos(precoAluguel);
         conteudo.setDisponivel(false);
 
+        emitirRecibo(conteudo, precoAluguel);
+
+        return this;
+    }
+
+    private void emitirRecibo(Conteudo conteudo, double precoAluguel) {
         System.out.println("==================================================");
         System.out.println("RECIBO STREAMFIAP");
         System.out.println("Usuario: " + this.nome);
@@ -63,8 +69,6 @@ public class Usuario {
         System.out.println("Creditos restantes: R$ " + this.creditos);
         System.out.println("Obrigado por usar o StreamFIAP!");
         System.out.println("==================================================");
-
-        return this;
     }
 
     // Getters e Setters

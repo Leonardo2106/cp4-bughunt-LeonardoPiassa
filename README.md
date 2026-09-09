@@ -11,7 +11,7 @@
 | Campo | |
 |---|---|
 | **Total de bugs corrigidos** | 12 / 12 |
-| **Total de ajustes de Clean Code** | 4 / 6 |
+| **Total de ajustes de Clean Code** | 5 / 6 |
 
 ---
 
@@ -43,7 +43,7 @@
 | clean02 | `Usuario.alugar`, nos nomes `c` e `p`. | Nomes de uma letra escondiam o papel do conteúdo e do preço na principal regra de negócio. | Renomeei-os para `conteudo` e `precoAluguel` em todo o método. |
 | clean03 | Final de `ConteudoController`. | Havia um método de desconto antigo nunca chamado e um bloco de cupom comentado, aumentando ruído e sugerindo regras que não pertencem ao contrato atual. | Removi o código morto; o histórico do Git continua disponível caso uma regra futura precise ser recuperada. |
 | clean04 | `Conteudo.calcularPrecoAluguel`. | A classe abstrata fornecia um preço padrão de filme para tipos diferentes, embora cada subtipo tenha uma regra própria. | Transformei o método em abstrato, obrigando cada classe concreta a declarar seu preço e deixando o contrato polimórfico explícito. |
-| clean05 | | | |
+| clean05 | `Usuario.alugar`. | O método misturava validação e mudança do estado do aluguel com os detalhes de formatação e impressão do recibo. | Extraí a impressão para `emitirRecibo`, deixando o fluxo principal curto e em um único nível de abstração, sem mudar sua saída. |
 | clean06 | | | |
 
 ---
