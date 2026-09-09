@@ -11,7 +11,7 @@
 | Campo | |
 |---|---|
 | **Total de bugs corrigidos** | 12 / 12 |
-| **Total de ajustes de Clean Code** | 5 / 6 |
+| **Total de ajustes de Clean Code** | 6 / 6 |
 
 ---
 
@@ -44,7 +44,7 @@
 | clean03 | Final de `ConteudoController`. | Havia um método de desconto antigo nunca chamado e um bloco de cupom comentado, aumentando ruído e sugerindo regras que não pertencem ao contrato atual. | Removi o código morto; o histórico do Git continua disponível caso uma regra futura precise ser recuperada. |
 | clean04 | `Conteudo.calcularPrecoAluguel`. | A classe abstrata fornecia um preço padrão de filme para tipos diferentes, embora cada subtipo tenha uma regra própria. | Transformei o método em abstrato, obrigando cada classe concreta a declarar seu preço e deixando o contrato polimórfico explícito. |
 | clean05 | `Usuario.alugar`. | O método misturava validação e mudança do estado do aluguel com os detalhes de formatação e impressão do recibo. | Extraí a impressão para `emitirRecibo`, deixando o fluxo principal curto e em um único nível de abstração, sem mudar sua saída. |
-| clean06 | | | |
+| clean06 | Campos de repository dos três controllers. | A injeção em campos mutáveis com `@Autowired` escondia dependências obrigatórias e dificultava instanciar os controllers em testes. | Adotei injeção por construtor e campos `final`; o Spring usa automaticamente o único construtor, sem precisar de `@Autowired`. |
 
 ---
 
@@ -54,39 +54,60 @@
 > como exemplo**. Respostas genéricas de tutorial não pontuam.
 
 ### 1. Injeção de dependência (Aula 13)
-Os controllers recebem os repositories via `@Autowired` (ex.: `ConteudoController`
-usa `ConteudoRepository`). Explique por que o Spring precisa gerenciar esses objetos
-em vez de criarmos com `new ConteudoRepository()`. O que exatamente o Spring faz ao
-injetar um bean, e por que isso não funcionaria com um `new` comum?
+`ConteudoRepository` é uma interface, portanto nem sequer existe uma implementação concreta que
+o controller possa criar diretamente com `new`. Na inicialização, o Spring Data gera um proxy que
+implementa essa interface, registra esse objeto como bean e configura nele o acesso JPA ao banco.
+Ao construir `ConteudoController`, o contêiner encontra o único construtor e entrega o bean compatível.
+O mesmo ocorre com os dois repositories exigidos por `AluguelController`. Com `new` no controller,
+perderíamos esse proxy gerenciado, sua configuração, transações e a possibilidade de substituir a
+dependência em testes. Os campos `final` ainda deixam claro que ela é obrigatória e não muda depois.
 
 ### 2. JDBC vs Spring Data JPA (Aulas 12 e 13)
-Na Aula 12 escrevemos um `ProdutoDAO` na mão com `Connection`, `PreparedStatement` e
-`ResultSet`. Aqui o `ConteudoRepository` tem 2 linhas e faz CRUD completo. Compare as
-duas abordagens: o que o Spring Data JPA automatiza, o que o JDBC/DAO ainda resolve
-melhor, e como o `findByCategoria` consegue funcionar sem implementação.
+No JDBC/DAO, nosso código abre `Connection`, prepara SQL, associa parâmetros, percorre o
+`ResultSet`, converte cada linha em objeto e fecha recursos. O Spring Data JPA fornece tudo isso
+para o CRUD ao fazer `ConteudoRepository` estender `JpaRepository<Conteudo, Long>` e usa as
+anotações das entidades para mapear objetos e tabelas. `findByCategoria` funciona porque o Spring
+interpreta o nome do método na inicialização, identifica a propriedade `categoria` e gera a consulta.
+Essa abstração reduz repetição e atende bem às operações comuns do StreamFIAP. JDBC direto ainda
+pode ser melhor quando precisamos de SQL muito específico, controle fino ou otimização particular.
 
 ### 3. Exceções checked vs unchecked (Aula 11)
-A `ClassificacaoIndicativaException` estourava como um erro genérico do servidor,
-sem mensagem útil para o cliente. Explique a diferença entre `extends Exception` e
-`extends RuntimeException` no contexto desse bug, e como você fez a mensagem da
-regra (classificação indicativa) chegar de forma clara ao cliente da API.
+Quando uma exceção estende `Exception`, ela é checked: quem chama precisa capturá-la ou declará-la
+com `throws`. Isso obrigava `Usuario.alugar` e o endpoint a carregar uma preocupação de compilação,
+mas não criava por si só uma resposta HTTP útil. Uma exceção que estende `RuntimeException` é
+unchecked e pode atravessar naturalmente as camadas até o mecanismo global do Spring. Alterei
+`ClassificacaoIndicativaException` para unchecked e criei um método específico no
+`GlobalExceptionHandler`. Assim a mensagem montada pelo model chega no campo `erro` de uma resposta
+HTTP 403, em vez de aparecer apenas como erro genérico 500.
 
 ### 4. Sobrescrita vs sobrecarga (Aula 7)
-Um dos bugs compilava sem nenhum erro: o método da `Serie` parecia sobrescrever
-`calcularPrecoAluguel`, mas na verdade sobrecarregava. Explique a diferença entre
-override e overload nesse caso e por que a anotação `@Override` teria impedido o bug.
+Sobrescrita mantém a assinatura do método herdado e troca sua implementação no subtipo. Sobrecarga
+cria outro método com o mesmo nome, porém com parâmetros diferentes. `Conteudo` declarava
+`calcularPrecoAluguel()`, enquanto `Serie` tinha `calcularPrecoAluguel(double desconto)`; por isso o
+código compilava, mas uma referência `Conteudo` chamava a versão herdada de R$ 9,90. Removi o
+parâmetro que não era usado e marquei o método com `@Override`, fazendo uma série de cinco temporadas
+custar R$ 24,50. Se a assinatura errada tivesse `@Override` desde o início, o compilador informaria
+que não havia método correspondente na superclasse e impediria esse bug silencioso.
 
 ### 5. Onde blindar o objeto? (Aulas 3, 4 e 13)
-Vimos bugs de dados inválidos aceitos (duração negativa, créditos negativos, campos
-nulos). Em quais lugares (construtor, setter, método do model) cada tipo de validação
-deve ficar? Justifique usando os bugs que você encontrou e explique por que validar só
-em um lugar não foi suficiente.
+A duração pertence ao estado de qualquer `Conteudo`, então sua validação foi centralizada em
+`setDuracaoMinutos`; o construtor chama esse setter para que o objeto já nasça válido e mudanças
+posteriores também sejam protegidas. Validar somente no controller deixaria outros pontos de criação
+livres para gravar duração zero ou negativa. Os campos nulos da `Serie` tinham outra causa: seu
+construtor não encaminhava os dados ao construtor de `Conteudo`, corrigido com `super(...)`.
+Já créditos negativos eram consequência de uma regra de comportamento invertida; a defesa correta
+fica em `Usuario.alugar`, antes de `debitarCreditos`. Assim cada invariável fica junto do estado ou
+da operação que realmente a governa, sem depender exclusivamente da camada HTTP.
 
 ### 6. Abstração e interface (Aulas 8 e 9)
-`Conteudo` é abstrata e `Promocionavel` é uma interface. Explique a diferença de
-propósito entre as duas nesse projeto e o que mudaria no código se o Documentário
-passasse a ter promoções — quais classes/linhas seriam tocadas e quais ficariam
-intactas? O que isso diz sobre o design do sistema?
+`Conteudo` representa a base comum da hierarquia: concentra identidade, título, categoria, duração,
+classificação e disponibilidade, além de exigir o cálculo polimórfico do preço. `Promocionavel`
+representa uma capacidade independente da herança: somente os tipos que assinam esse contrato têm
+`aplicarPromocao`. Se documentários passassem a participar, bastaria declarar `implements
+Promocionavel` em `Documentario` e implementar ali o desconto. `Conteudo.calcularPrecoPromocional`,
+os controllers, os repositories, `Filme` e `Serie` permaneceriam intactos, pois o método já consulta
+o contrato com `instanceof`. Isso mostra baixo acoplamento: uma capacidade pode ser adicionada a um
+subtipo sem espalhar condicionais por toda a aplicação.
 
 ---
 
