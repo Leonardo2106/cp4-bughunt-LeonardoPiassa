@@ -29,4 +29,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleDuracaoInvalida(DuracaoInvalidaException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("erro", e.getMessage()));
     }
+
+    @ExceptionHandler(ClassificacaoIndicativaException.class)
+    public ResponseEntity<Map<String, String>> handleClassificacaoIndicativa(ClassificacaoIndicativaException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("erro", e.getMessage()));
+    }
 }
